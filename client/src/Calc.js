@@ -1,15 +1,13 @@
 import React, {useRef, useState} from 'react';
 
 export default function Calc(){
-    const refPeople = useRef(null);
-    const refDay = useRef(null);
-    const refResult = useRef(null)
     const [state,setState] = useState({
-        people: 1000,
+        people: 10000,
         maxPeople: 100000,
         day: 1,
-        peoplePrice: 0.1,
-        allprice: (1000 * 0.1) * 1,
+				maxDay: 180,
+        peoplePrice: 0.01,
+        allprice: (10000 * 0.01) * 1,
         salePrice: 0,
         additionPrice: 0
     })
@@ -17,7 +15,7 @@ export default function Calc(){
 
     const calcSale = (price, day) => {
         const sale = .95;
-        const count =  parseInt((day / 10).toFixed(0));
+        const count =  Math.floor(day / 10);
         const totalSale = Array(count).fill("").reduce((total, el) => {
             return total * sale
         },price)
@@ -31,9 +29,9 @@ export default function Calc(){
         const val = parseInt(e.target.value);
         const {peoplePrice, day} = state;
         
-
         setState((prevState) => {
-            return {...prevState, allprice: ((val * peoplePrice) * day).toFixed(1), people:  val}
+					calcSale((val * peoplePrice) * val, day)
+          return {...prevState, allprice: ((val * peoplePrice) * day).toFixed(1), people:  val}
         })
     } 
 
@@ -55,14 +53,27 @@ export default function Calc(){
 
     const newCounMaxPeople = (e) => {
         const val = parseInt(e.target.value);
-        if(isFinite(val)) setState((prevState) => {return {...prevState, maxPeople: 100000} })
+        if(isNaN(val)) setState((prevState) => {return {...prevState, maxPeople: 100000} })
         if(val > 1000) setState((prevState) => {return {...prevState, maxPeople: val} })
     }
 
     const newCounMaxEmpty = (e) => {
         const val = e.target.value;
-        if(val.trim() === "") setState((prevState) => {return {...prevState, maxPeople: 100000} })
+        if(val.trim() === "") setState((prevState) => {return {...prevState, maxPeople: 100000} });
+				e.target.value = ""
     }
+
+		const newCounMaxDay = (e) => {
+			const val = parseInt(e.target.value);
+			if(isNaN(val)) setState((prevState) => {return {...prevState, maxDay: 180} })
+			if(val > 1) setState((prevState) => {return {...prevState, maxDay: val} })
+		}
+
+		const newCounMaxDayBlur = (e) => {
+			const val = e.target.value;
+			if(val.trim() === "") setState((prevState) => {return {...prevState, maxDay: 180} });
+			e.target.value = ""
+		}
 
 
     return  (
@@ -70,21 +81,24 @@ export default function Calc(){
 
         <div className="s-input">
 
-            <span className="s-input__start">min:1000</span>
+            <span className="s-input__start">min:10000</span>
             <span>
                 Люди 
-                <input className="line__appendLine" name="newcountPeople" placeholder="введите число выше 1000" onChange={newCounMaxPeople} onBlur={newCounMaxEmpty}/>
+                <input className="line__appendLine" name="newcountPeople" placeholder="введите число выше 100000" onChange={newCounMaxPeople} onBlur={newCounMaxEmpty}/>
             </span> 
-            <input className="line__input" name="people" type="range" min="1000" max={state.maxPeople} onChange={fnpeople}/>
-            <span ref={refPeople} className="count" >{state.people}</span>
+            <input className="line__input" name="people" type="range" min="10000" max={state.maxPeople} onChange={fnpeople}/>
+            <span className="count" >{state.people}</span>
             
         </div>
         
         <div className="s-input">
             <span className="s-input__start">min:1</span>
-            <span>Дни</span>
-            <input className="line__input" name="day" type="range" min="1" max="180" defaultValue="1" onChange={fnday}/>
-            <span ref={refDay} className="count" >{state.day}</span>
+            <span>
+							Дни
+							<input className="line__appendLine" name="newcountDay" placeholder="Введите дни не меньше 1" onChange={newCounMaxDay} onBlur={newCounMaxDayBlur}/>
+						</span>
+            <input className="line__input" name="day" type="range" min="1" max={state.maxDay} defaultValue="1" onChange={fnday}/>
+            <span className="count" >{state.day}</span>
         </div>
 
         <div className="s-input s-input--checkbox">
@@ -103,8 +117,8 @@ export default function Calc(){
         </div>
 
 
-        <div ref={refResult} className="show-result"><span className="result_field">result:</span>
-            {state.day < 10 ? <span>{+state.allprice + state.additionPrice}$</span> : <><span className="sale" >{+state.allprice + state.additionPrice}$</span><span>{+state.salePrice + state.additionPrice}$</span></>  } 
+        <div className="show-result"><span className="result_field">result:</span>
+            {state.day < 10 ? <span>{(+state.allprice + state.additionPrice).toFixed(1)}$</span> : <><span className="sale" >{(+state.allprice + state.additionPrice).toFixed(1)}$</span><span>{(+state.salePrice + state.additionPrice).toFixed(1)}$</span></>  } 
         </div>
         
 
