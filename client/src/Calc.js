@@ -5,7 +5,7 @@ export default function Calc(){
         people: 10000,
         maxPeople: 100000,
         day: 1,
-				maxDay: 180,
+		maxDay: 180,
         peoplePrice: 0.01,
         allprice: (10000 * 0.01) * 1,
         salePrice: 0,
@@ -117,6 +117,7 @@ export default function Calc(){
         </div>
 
 
+        <div className="show-result">in day: { state.day < 10 ? (state.allprice / state.day).toFixed(1) : (state.salePrice / state.day).toFixed(1)}</div>
         <div className="show-result"><span className="result_field">result:</span>
             {state.day < 10 ? <span>{(+state.allprice + state.additionPrice).toFixed(1)}$</span> : <><span className="sale" >{(+state.allprice + state.additionPrice).toFixed(1)}$</span><span>{(+state.salePrice + state.additionPrice).toFixed(1)}$</span></>  } 
         </div>
